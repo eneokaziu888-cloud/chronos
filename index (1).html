@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="sq" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CHRONOS — Udhëtim nëpër qytetërimet</title>
+<style>
+:root{--bg:#0b1630;--bg2:#12224a;--card:#16295a;--ink:#f1e8d2;--mut:#aeb8d0;--gold:#d4af37;--line:#2c4180;--ok:#3fa56b;--bad:#c4513f;--gr:#4a8fd4;--ro:#b8453a;--me:#6f8f4e;--bz:#8a5bb5;--ar:#16a29a}
+[data-theme=light]{--bg:#f4ecd8;--bg2:#eadfc3;--card:#fffaf0;--ink:#1c2340;--mut:#555d78;--gold:#8a6a12;--line:#cdbd92}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 Georgia,'Palatino Linotype',serif}
+h1,h2,h3{font-family:'Trajan Pro','Cinzel',Georgia,serif;letter-spacing:.03em;line-height:1.2;margin:.2em 0 .5em}
+button{font:inherit;cursor:pointer;color:inherit}
+header{position:sticky;top:0;z-index:5;background:var(--bg2);border-bottom:1px solid var(--gold);display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px 14px}
+header b{color:var(--gold);font-family:Georgia,serif;font-size:1.15rem;margin-right:auto;cursor:pointer}
+nav{display:flex;flex-wrap:wrap;gap:4px}
+nav button,.tool{background:none;border:1px solid transparent;padding:5px 11px;border-radius:4px;font-size:.9rem}
+nav button:hover,nav button.on{border-color:var(--gold);color:var(--gold)}
+.tool{border-color:var(--line)}
+main{max-width:1000px;margin:0 auto;padding:20px 16px 60px}
+.hero{text-align:center;padding:30px 10px 10px;animation:rise .9s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}}
+.hero h1{font-size:clamp(2.6rem,9vw,5.2rem);color:var(--gold);margin:0}
+.hero p{color:var(--mut);max-width:560px;margin:.4em auto}
+.hero svg{width:100%;max-width:700px;height:auto;margin-top:10px}
+.btn{background:var(--gold);color:#101830;border:0;padding:11px 22px;border-radius:4px;font-weight:bold;margin:6px}
+.btn.alt{background:none;color:var(--gold);border:1px solid var(--gold)}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--c,var(--gold));border-radius:3px;padding:14px 16px;text-align:left;box-shadow:0 6px 14px #0004;transition:transform .15s}
+button.card:hover{transform:translateY(-3px)}
+.card h3{font-size:1.05rem;margin:.1em 0 .3em}
+.card small,.mut{color:var(--mut)}
+.bar{height:9px;background:var(--line);border-radius:5px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--gold);transition:width .5s}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:18px 0}
+.stats div{background:var(--card);border:1px solid var(--line);padding:10px;text-align:center}
+.stats b{display:block;font-size:1.5rem;color:var(--gold)}
+.opt{display:block;width:100%;text-align:left;margin:7px 0;padding:10px 14px;background:var(--card);border:1px solid var(--line);border-radius:4px}
+.opt:hover:not(:disabled){border-color:var(--gold)}
+.opt.ok{background:var(--ok);color:#fff}.opt.bad{background:var(--bad);color:#fff}
+.note{border-left:4px solid var(--gold);background:var(--card);padding:10px 14px;margin:12px 0}
+.tag{display:inline-block;border:1px solid var(--gold);color:var(--gold);padding:0 8px;border-radius:12px;font-size:.8rem;margin:2px}
+table{width:100%;border-collapse:collapse}td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}td:first-child{color:var(--gold);white-space:nowrap}
+input,select{font:inherit;padding:8px;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:4px;width:100%;max-width:420px}
+.tl{border-left:3px solid var(--gold);margin-left:8px;padding-left:16px}
+.tl button{display:block;width:100%;text-align:left;background:none;border:0;padding:6px 0}
+.tl button:hover,.tl button.on{color:var(--gold)}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--gold);color:#101830;padding:10px 20px;border-radius:30px;font-weight:bold;z-index:9;animation:rise .3s}
+footer{text-align:center;color:var(--mut);font-size:.85rem;padding:20px}
+body.focus header,body.focus footer{display:none}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+<b onclick="go('home')" title="Kthehu në faqen kryesore">CHRONOS</b>
+<nav id="nav"></nav>
+<button class="tool" id="th" title="Modalitet i errët / i çelët">◐</button>
+<button class="tool" id="fc" title="Modalitet pa shpërqendrime">Lexim</button>
+<button class="tool" id="sn" title="Tinguj">🔊</button>
+</header>
+<main id="app"></main>
+<footer>CHRONOS — Histori 10 · Projekt edukativ. Ilustrimet janë SVG të krijuara lokalisht. Burimet: teksti i Historisë 10, Britannica, Wikipedia. Të gjitha të dhënat ruhen vetëm në pajisjen tënde.</footer>
+
+<script>
+/* ---------- TË DHËNAT ---------- */
+const C={gr:['Greqia Antike','var(--gr)'],ro:['Roma Antike','var(--ro)'],me:['Europa Mesjetare','var(--me)'],bz:['Bizanti','var(--bz)'],ar:['Qytetërimi Arab','var(--ar)']};
+const T=[
+{id:'1.2',ch:1,c:'gr',t:'Greqia antike: ekonomia dhe shoqëria',s:'Toka greke ishte malore dhe e varfër, ndaj grekët kultivonin kryesisht ullirin, hardhinë dhe drithërat, ndërsa tregtia detare dhe kolonizimi u bënë jetësore. Qendra e jetës ishte agora, ku bëhej tregti dhe diskutim. Shoqëria ndahej në qytetarë, të huaj (metekë) dhe skllevër. Gratë, në shumicën e polisëve, nuk kishin të drejta politike dhe jetonin kryesisht në shtëpi.',d:[['VIII–VI shek. p.e.s.','Kolonizimi grek në Mesdhe dhe Detin e Zi']],w:[['Agora','Sheshi i tregut dhe i takimeve publike'],['Metek','Të huaj që jetonin në polis pa të drejta politike'],['Skllav','Person në pronësi të tjetrit, i përdorur në bujqësi, miniera dhe punishte']],f:'Anijet greke tregtare ishin më të gjera e më të ngadalta se anijet luftarake.'},
+{id:'1.3',ch:1,c:'gr',t:'Organizimi politik i qytet-shteteve',s:'Polisi ishte qytet-shtet i pavarur me territorin e vet. Në Athinë u zhvillua demokracia: qytetarët meshkuj merrnin pjesë në Asamble (Ekklesia) dhe votonin ligjet. Sparta ishte shtet ushtarak: dy mbretër, efori dhe edukim i ashpër (agoge) për djemtë. Në të dyja gratë, skllevërit dhe të huajt përjashtoheshin nga pushteti.',d:[['508/507 p.e.s.','Reformat e Klisthenit në Athinë'],['490–479 p.e.s.','Luftërat greko-persiane'],['431–404 p.e.s.','Lufta e Peloponezit (Athinë kundër Spartës)']],w:[['Polis','Qytet-shtet grek'],['Ekklesia','Asambleja e qytetarëve athinas'],['Agoge','Sistemi spartan i edukimit ushtarak']],f:'Në Athinë disa zyrtarë zgjidheshin me short, jo me votim.'},
+{id:'1.4',ch:1,c:'ro',t:'Roma antike: ekonomia dhe shoqëria',s:'Roma mbështetej te bujqësia, tregtia, zejtaria dhe minierat. Rrugët romake lidhnin ushtrinë dhe tregtarët me provincat. Shoqëria ndahej në patricë (aristokraci), plebejë, skllevërit dhe të lirë të tjerë. Jeta publike zhvillohej në forume, banja publike dhe amfiteatro, ku jepeshin shfaqje.',d:[['312 p.e.s.','Ndërtohet Via Appia, rruga e parë e madhe']],w:[['Patric','Anëtar i familjeve aristokrate të vjetra'],['Plebej','Qytetar i thjeshtë i lirë'],['Forum','Sheshi qendror publik i qytetit romak']],f:'Ujësjellësit romakë furnizonin qytetet me ujë duke përdorur rrjedhën e rëndesës.'},
+{id:'1.5',ch:1,c:'ro',t:'Nga republika në perandori',s:'Roma filloi me mbretër, pastaj (tradicionalisht në 509 p.e.s.) u bë republikë, e udhëhequr nga Senati dhe magjistratët e zgjedhur. Pushtimet sollën pasuri, por edhe konflikte shoqërore dhe luftëra civile. Jul Cezari përqendroi pushtetin dhe u vra në vitin 44 p.e.s. Augusti, trashëgimtari i tij, u bë perandori i parë në vitin 27 p.e.s.',d:[['753 p.e.s.','Themelimi i Romës (datë tradicionale)'],['509 p.e.s.','Fillimi i Republikës (datë tradicionale)'],['44 p.e.s.','Vrasja e Jul Cezarit'],['27 p.e.s.','Augusti merr titullin Augustus']],w:[['Senat','Këshill i lartë i Romës'],['Konsull','Magjistrati më i lartë i republikës, dy në vit']],f:'Në republikë, dy konsuj sundonin njëkohësisht për të mos pasur një sundimtar të vetëm.'},
+{id:'1.6',ch:1,c:'ro',t:'Rënia e Perandorisë Romake dhe trashëgimia',s:'Krizat politike, ekonomike dhe ushtarake, së bashku me sulmet e popujve gjermanikë, dobësuan perandorinë. Në vitin 395 ajo u nda përfundimisht në Perëndim dhe Lindje. Perandoria e Perëndimit ra në 476, kur Odoakri rrëzoi Romulus Augustulin. Lindja vazhdoi si Perandoria Bizantine. Trashëgimia romake: e drejta, latinishtja, arkitektura dhe infrastruktura.',d:[['395','Ndarja përfundimtare e perandorisë'],['476','Rënia e Perandorisë Romake të Perëndimit']],w:[['Migrim','Zhvendosje e popujve në territore të reja'],['Romulus Augustuli','Perandori i fundit i Perëndimit']],f:'Gjuhët shqipe nuk rrjedh nga latinishtja, por ka huazuar shumë fjalë prej saj.'},
+{id:'1.7',ch:1,c:'ro',t:'Besimi fetar — Krishterimi',s:'Krishterimi lindi në provincën romake të Judesë, mbi mësimet e Jezu Krishtit: dashuria për të afërmin dhe besimi në një Zot. U përhap nëpër perandori pavarësisht persekutimeve të herëpashershme. Me Ediktin e Milanos (313), Konstandini e lejoi ligjërisht. Në vitin 380, Teodosi I e bëri fe zyrtare të perandorisë.',d:[['313','Edikti i Milanos, toleranca ligjore'],['380','Krishterimi bëhet fe zyrtare nën Teodosin I']],w:[['Edikt','Dekret i një sundimtari'],['Persekutim','Ndjekje e një grupi për shkak të besimit']],f:'Kisha e hershme mblidhej shpesh në shtëpi private, jo në ndërtesa publike.'},
+{id:'1.8',ch:1,c:'gr',t:'Periudha helenistike',s:'Aleksandri i Madh, mbret i Maqedonisë, pushtoi Persinë dhe arriti deri në Indi. Pas vdekjes së tij në 323 p.e.s., perandoria u nda midis gjeneralëve. Kultura greke u përzie me traditat lindore. Aleksandria në Egjipt u bë qendër e shkencës, me Bibliotekën e saj të famshme.',d:[['336–323 p.e.s.','Mbretërimi i Aleksandrit të Madh'],['323 p.e.s.','Vdekja e Aleksandrit dhe ndarja e perandorisë']],w:[['Helenizëm','Përhapja dhe përzierja e kulturës greke me atë lindore'],['Diadoh','Pasues i Aleksandrit']],f:'Aristoteli ishte mësuesi i Aleksandrit kur ai ishte i ri.'},
+{id:'2.1',ch:2,c:'me',t:'Europa mesjetare në fillimet e saj',s:'Pas rënies së Perëndimit u formuan mbretëri të reja gjermanike. Kisha dhe manastiret ruajtën dijen dhe shkrim-leximin. Shumica e njerëzve jetonin në fshat dhe punonin tokën. Fillojnë marrëdhëniet feudale: vasali merr tokë (feud) nga feudali në shkëmbim të shërbimit ushtarak dhe besnikërisë.',d:[['V shek.','Formohen mbretëritë gjermanike në Perëndim']],w:[['Feud','Tokë e dhënë në këmbim të shërbimit'],['Vasal','Ai që merr feudin dhe i betohet besnikëri'],['Manastir','Komunitet murgjish ose murgeshash']],f:'Murgjit kopjonin dorëshkrime me dorë, njëri nga ata shpesh dilte në vite të tëra.'},
+{id:'2.2',ch:2,c:'bz',t:'Qytetërimi bizantin',s:'Perandoria Bizantine ishte vazhdimi i Romës Lindore, me kryeqytet Konstandinopojën, qendër tregtare dhe kulturore. Justiniani I (527–565) ndërmori rimarrjen e territoreve dhe porositi Kodin e Justinianit, përmbledhje e së drejtës romake. Në kohën e tij u ndërtua Shën Sofia (537). Perandoria zgjati deri në 1453.',d:[['330','Konstandinopoja bëhet kryeqytet'],['527–565','Justiniani I'],['537','Përfundon Shën Sofia'],['1453','Osmanët pushtojnë Konstandinopojën']],w:[['Mozaik','Figurë e bërë me copëza guri ose qelqi'],['Kodi i Justinianit','Përmbledhja e ligjeve romake']],f:'Mozaikët bizantinë përdornin copëza ari për të krijuar shkëlqim.'},
+{id:'2.3',ch:2,c:'ar',t:'Qytetërimi arab-islamik',s:'Islami lindi në Gadishullin Arabik në shek. VII me Muhamedin. Në 622 ndodhi Hixhra (shpërngulja nga Meka në Medinë). Kalifatet e zgjeruan shtetin shpejt: Omajadët me kryeqytet Damaskun, më pas Abasidët me Bagdadin (themeluar në 762). Dija lulëzoi në matematikë, astronomi, mjekësi dhe filozofi, dhe ndikoi në Europë.',d:[['622','Hixhra, fillimi i kalendarit islam'],['661','Kalifati Omajad (Damask)'],['750','Kalifati Abasid'],['762','Themelohet Bagdadi']],w:[['Kalif','Udhëheqës i bashkësisë myslimane'],['Karvan','Grup tregtarësh që udhëtojnë së bashku']],f:'Fjala "algjebër" vjen nga një libër i matematikanit al-Khwarizmi.'},
+{id:'2.4',ch:2,c:'me',t:'Perandoria e Shenjtë Romake',s:'Në vitin 800 Papa Leoni III kurorëzoi Karlin e Madh perandor. Perandoria e Shenjtë Romake lidhet tradicionalisht me kurorëzimin e Otonit I në 962. Pushteti i perandorit ishte i kufizuar nga princat dhe nga feudalizmi. Papët dhe perandorët luftuan për pushtet, si në Kanosa (1077).',d:[['800','Kurorëzimi i Karlit të Madh'],['962','Kurorëzimi i Otonit I'],['1077','Henri IV në Kanosa']],w:[['Decentralizim','Shpërndarje e pushtetit në shumë duar'],['Kurorëzim','Ceremoni që i jep dikujt titullin']],f:'Titulli "perandor" u rishfaq në Perëndim pas gati 324 vitesh.'}
+];
+const Q=[
+[1,'Dy kulturat tipike bujqësore të Greqisë antike ishin:',['Ulliri dhe hardhia','Orizi dhe pambuku','Misri dhe patatja'],0,'Misri e patatja erdhën nga Amerika më vonë.','1.2'],
+[1,'Sheshi i tregut dhe i takimeve në polis quhej:',['Akropol','Agora','Forum'],1,'Agora ishte zemra e jetës publike greke.','1.2'],
+[1,'Çfarë ishte polisi?',['Një ushtri','Një qytet-shtet','Një perandori'],1,'Polisi ishte qytet-shtet i pavarur.','1.3'],
+[1,'Ku votonin ligjet qytetarët athinas?',['Në Asamble (Ekklesia)','Në Senat','Në Agoge'],0,'Ekklesia ishte asambleja e qytetarëve.','1.3'],
+[2,'Edukimi ushtarak i djemve në Spartë quhej:',['Agoge','Ekklesia','Metek'],0,'Agoge përgatiste ushtarë të disiplinuar.','1.3'],
+[1,'Rrugët romake shërbyen kryesisht për:',['Argëtim','Ushtrinë dhe tregtinë','Vetëm ceremoni'],1,'Lidhnin provincat me qendrën.','1.4'],
+[1,'Patricët ishin:',['Skllevër','Aristokracia e familjeve të vjetra','Tregtarë të huaj'],1,'Patricët mbanin pushtetin në fillim.','1.4'],
+[1,'Jul Cezari u vra në vitin:',['44 p.e.s.','27 p.e.s.','476'],0,'Ngjarja ndodhi në Idat e Marsit, 44 p.e.s.','1.5'],
+[1,'Perandori i parë romak ishte:',['Cezari','Augusti','Konstandini'],1,'Augusti, në 27 p.e.s.','1.5'],
+[1,'Perandoria Romake e Perëndimit ra në:',['395','476','800'],1,'Në 476 Odoakri rrëzoi Romulus Augustulin.','1.6'],
+[1,'Edikti i Milanos (313) e bëri krishterimin:',['Fe zyrtare','Të lejuar ligjërisht','Të ndaluar'],1,'Ishte tolerim; fe zyrtare u bë në 380.','1.7'],
+[2,'Kush e bëri krishterimin fe zyrtare në 380?',['Konstandini','Teodosi I','Augusti'],1,'Teodosi I.','1.7'],
+[1,'Mësuesi i Aleksandrit të Madh ishte:',['Aristoteli','Perikliu','Justiniani'],0,'Aristoteli e mësoi në rininë e tij.','1.8'],
+[1,'Qendra shkencore helenistike me bibliotekën e famshme ishte:',['Athina','Aleksandria','Damasku'],1,'Aleksandria, në Egjipt.','1.8'],
+[2,'Në feudalizëm, vasali merrte:',['Një feud në këmbim të shërbimit','Titullin e mbretit','Vetëm ar'],0,'Toka kundrejt besnikërisë dhe shërbimit ushtarak.','2.1'],
+[1,'Perandori që porositi Kodin e Justinianit ishte:',['Konstandini','Justiniani I','Karli i Madh'],1,'Kodi grumbulloi të drejtën romake.','2.2'],
+[2,'Shën Sofia përfundoi në vitin:',['330','537','1453'],1,'Në kohën e Justinianit, 537.','2.2'],
+[1,'Hixhra është shpërngulja:',['Nga Damasku në Bagdad','Nga Meka në Medinë','Nga Kordoba në Kajro'],1,'Ndodhi në 622.','2.3'],
+[2,'Bagdadi u bë kryeqytet i:',['Omajadëve','Abasidëve','Bizantinëve'],1,'Themelohet në 762.','2.3'],
+[1,'Karli i Madh u kurorëzua perandor në:',['476','800','962'],1,'Nga Papa Leoni III.','2.4']
+];
+const TF=[
+['Athina ishte qytet-shtet me demokraci të drejtpërdrejtë për qytetarët meshkuj.',1,'Qytetarët mund të merrnin pjesë në Asamble.'],
+['Gratë athinase kishin të drejtë vote.',0,'Ato nuk kishin të drejta politike.'],
+['Perandoria Bizantine ishte vazhdimi i pjesës lindore të Romës.',1,'Kryeqyteti ishte Konstandinopoja.'],
+['Augusti ishte perandori i parë romak.',1,'Që nga 27 p.e.s.'],
+['Rënia e Perëndimit romak ndodhi në vitin 800.',0,'Ndodhi në 476; 800 është kurorëzimi i Karlit.'],
+['Bagdadi ishte kryeqytet i Abasidëve.',1,'Themeluar në 762.'],
+['Krishterimi lindi në provincën romake të Judesë.',1,'Ishte provincë romake.'],
+['Edikti i Milanos e shpalli krishterimin fe të vetme të lejuar.',0,'Ai solli tolerim, jo ekskluzivitet.']
+];
+const EV=[[-509,'Fillimi i Republikës Romake (tradicionale)'],[-336,'Aleksandri i Madh bëhet mbret'],[-44,'Vrasja e Jul Cezarit'],[-27,'Augusti, perandori i parë'],[313,'Edikti i Milanos'],[380,'Krishterimi fe zyrtare'],[395,'Ndarja e Perandorisë Romake'],[476,'Rënia e Perëndimit romak'],[537,'Përfundon Shën Sofia'],[622,'Hixhra'],[762,'Themelohet Bagdadi'],[800,'Kurorëzimi i Karlit të Madh'],[962,'Otoni I kurorëzohet'],[1453,'Rënia e Konstandinopojës']];
+const yr=y=>y<0?(-y)+' p.e.s.':y+' e.s.';
+const MEDALS=[
+['Studiuesi i Greqisë Antike','🏛',S=>['1.2','1.3','1.8'].every(i=>S.done[i])],
+['Eksperti i Romës','🦅',S=>['1.4','1.5','1.6','1.7'].every(i=>S.done[i])],
+['Eksploruesi i Bizantit','🕌',S=>!!S.done['2.2']],
+['Historiani Mesjetar','🏰',S=>['2.1','2.3','2.4'].every(i=>S.done[i])],
+['Mjeshtri i Kronologjisë','⏳',S=>S.tlPerfect>0],
+['Mjeshtri i Historisë','👑',S=>T.every(t=>S.done[t.id])]
+];
+/* ---------- GJENDJA ---------- */
+let S={xp:0,done:{},quizzes:0,best:0,tlPerfect:0,badges:{},theme:'dark',sound:true};
+try{Object.assign(S,JSON.parse(localStorage.getItem('chronos')||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem('chronos',JSON.stringify(S))}catch(e){}};
+const $=s=>document.querySelector(s),app=$('#app');
+const lvl=()=>Math.floor(S.xp/100)+1;
+const pct=()=>Math.round(Object.keys(S.done).length/T.length*100);
+let ac;
+function beep(ok){if(!S.sound)return;try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=ok?660:200;g.gain.value=.06;o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+.15)}catch(e){}}
+function toast(m){const d=document.createElement('div');d.className='toast';d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),2200)}
+function add(n){S.xp+=n;checkMedals();save();}
+function checkMedals(){MEDALS.forEach(([n,i,f])=>{if(f(S)&&!S.badges[n]){S.badges[n]=1;toast(i+' Medalje e re: '+n);beep(1)}})}
+const shuffle=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
+/* ---------- NAVIGIMI ---------- */
+const NAV=[['home','Kreu'],['topics','Temat'],['quiz','Kuizi'],['tf','E vërtetë?'],['time','Kronologjia'],['cards','Kartela'],['me','Arritjet']];
+let cur='home';
+function go(v,a){cur=v;$('#nav').innerHTML=NAV.map(n=>`<button class="${n[0]==v?'on':''}" onclick="go('${n[0]}')">${n[1]}</button>`).join('');window.scrollTo(0,0);V[v](a)}
+const V={};
+const bar=p=>`<div class="bar"><i style="width:${p}%"></i></div>`;
+const panel=()=>`<div class="stats"><div><b>${S.xp}</b>XP</div><div><b>${lvl()}</b>Niveli</div><div><b>${pct()}%</b>Temat e përfunduara</div><div><b>${S.quizzes}</b>Kuize</div><div><b>${S.best}%</b>Rekordi</div></div>${bar(pct())}`;
+V.home=()=>{const nxt=T.find(t=>!S.done[t.id]);
+app.innerHTML=`<section class="hero"><h1>CHRONOS</h1><p><b>Udhëtim nëpër qytetërimet</b><br>Eksploro të kaluarën. Zgjidh sfidat. Zbulo historinë.</p>
+<svg viewBox="0 0 700 200" role="img" aria-label="Ilustrim: tempull grek, Koloseu dhe kështjellë"><rect width="700" height="200" fill="none"/><g fill="none" stroke="#d4af37" stroke-width="3"><path d="M30 170H230M45 170V80M75 170V80M105 170V80M135 170V80M165 170V80M195 170V80M215 170V80M30 80H230L130 35Z"/><path d="M280 170V90q0-20 20-20h130q20 0 20 20v80M300 170V100M330 170V100M360 170V100M390 170V100M420 170V100M280 120H450"/><path d="M510 170V90h25v-15h20v15h25v-15h20v15h25V170ZM535 170v-30h20v30"/></g><path d="M0 170H700" stroke="#d4af37" stroke-width="3"/></svg>
+<button class="btn" onclick="go('topics',${nxt?`'${nxt.id}'`:''})">Fillo udhëtimin</button><button class="btn alt" onclick="document.getElementById('civ').scrollIntoView()">Eksploro qytetërimet</button></section>
+<h2>Paneli yt</h2>${panel()}
+${nxt?`<h2>Vazhdo aty ku e le</h2><button class="card" onclick="go('topics','${nxt.id}')" style="--c:${C[nxt.c][1]}"><h3>${nxt.id} ${nxt.t}</h3><small>Tema e radhës</small></button>`:'<div class="note">Ke përfunduar të gjitha temat. Bravo!</div>'}
+<h2 id="civ">Qytetërimet</h2><div class="grid">${Object.entries(C).map(([k,v])=>`<button class="card" style="--c:${v[1]}" onclick="go('topics','c:${k}')"><h3>${v[0]}</h3><small>${T.filter(t=>t.c==k).length} tema</small></button>`).join('')}</div>
+<h2>Sfida e ditës</h2><div class="note">Provo ${Q.length>0?'një kuiz të përzier':''} dhe fito deri në 100 XP.<br><button class="btn" onclick="go('quiz')">Fillo kuizin</button></div>`;};
+V.topics=a=>{
+if(a&&/^\d\.\d$/.test(a)){const t=T.find(x=>x.id==a);return lesson(t)}
+let f='',q='';if(a&&a.startsWith('c:'))f=a.slice(2);
+const draw=()=>{const k=q.toLowerCase();const L=T.filter(t=>(!f||t.c==f)&&(!k||JSON.stringify(t).toLowerCase().includes(k)));
+$('#list').innerHTML=L.length?L.map(t=>`<button class="card" style="--c:${C[t.c][1]}" onclick="go('topics','${t.id}')"><h3>${S.done[t.id]?'✓ ':''}${t.id} ${t.t}</h3><small>${C[t.c][0]}</small></button>`).join(''):'<div class="note">Asnjë temë nuk përputhet me kërkimin. Provo një fjalë tjetër, p.sh. "Cezari".</div>'};
+app.innerHTML=`<h2>Temat</h2><input id="q" placeholder="Kërko temë, term ose datë…" aria-label="Kërko"> <select id="f" aria-label="Qytetërimi"><option value="">Të gjitha qytetërimet</option>${Object.entries(C).map(([k,v])=>`<option value="${k}" ${k==f?'selected':''}>${v[0]}</option>`).join('')}</select><br><br><div class="grid" id="list"></div>`;
+$('#q').oninput=e=>{q=e.target.value;draw()};$('#f').onchange=e=>{f=e.target.value;draw()};draw()};
+function lesson(t){
+app.innerHTML=`<button class="tool" onclick="go('topics')">← Temat</button><h2>${t.id} ${t.t}</h2><span class="tag" style="border-color:${C[t.c][1]}">${C[t.c][0]}</span>
+<p>${t.s}</p><h3>Data kryesore</h3><table>${t.d.map(d=>`<tr><td>${d[0]}</td><td>${d[1]}</td></tr>`).join('')}</table>
+<h3>Fjalor</h3><table>${t.w.map(d=>`<tr><td>${d[0]}</td><td>${d[1]}</td></tr>`).join('')}</table>
+<div class="note"><b>A e dije se?</b> ${t.f}</div>
+<button class="btn" onclick="go('quiz','${t.id}')">Testo njohuritë</button>
+<button class="btn alt" id="dn">${S.done[t.id]?'Përfunduar ✓':'Shëno si të përfunduar'}</button>`;
+$('#dn').onclick=()=>{if(S.done[t.id])return toast('Kjo temë është shënuar tashmë.');S.done[t.id]=1;add(30);toast('+30 XP');beep(1);lesson(t)}}
+let qz;
+V.quiz=a=>{
+if(!qz||a!==undefined&&a!==qz.mode){const pool=a&&/^\d\.\d$/.test(a)?Q.filter(x=>x[5]==a):a=='2'?Q.filter(x=>x[5][0]=='2'):a=='1'?Q.filter(x=>x[5][0]=='1'):Q;qz={mode:a,L:shuffle(pool).slice(0,10),i:0,sc:0,pick:null}}
+const q=qz;
+if(!q.L.length){app.innerHTML='<div class="note">Nuk ka pyetje për këtë temë ende. <button class="btn" onclick="qz=null;go(\'quiz\',\'\')">Kuiz i përzier</button></div>';return}
+if(q.i>=q.L.length){const p=Math.round(q.sc/q.L.length*100);S.quizzes++;S.best=Math.max(S.best,p);save();
+app.innerHTML=`<h2>Rezultati</h2><div class="stats"><div><b>${q.sc}/${q.L.length}</b>Përgjigje të sakta</div><div><b>${p}%</b>Përqindja</div></div><button class="btn" onclick="qz=null;go('quiz',${JSON.stringify(q.mode||'')})">Luaj përsëri</button><button class="btn alt" onclick="qz=null;go('home')">Kreu</button>`;qz=null;return}
+const x=q.L[q.i],lv=['','I lehtë','Mesatar','I vështirë'][x[0]];
+app.innerHTML=`<h2>Kuizi historik</h2>${!q.mode?`<p>Zgjidh modalitetin: <button class="tool" onclick="qz=null;go('quiz','1')">Kapitulli I</button> <button class="tool" onclick="qz=null;go('quiz','2')">Kapitulli II</button> <button class="tool" onclick="qz=null;go('quiz','')">Të përziera</button></p>`:''}${bar(q.i/q.L.length*100)}<p class="mut">Pyetja ${q.i+1}/${q.L.length} · ${lv} · Pikë: ${q.sc}</p><h3>${x[1]}</h3>${x[2].map((o,j)=>`<button class="opt" data-j="${j}">${o}</button>`).join('')}<div id="fb"></div>`;
+document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const j=+b.dataset.j,ok=j==x[3];document.querySelectorAll('.opt').forEach(o=>{o.disabled=1;if(+o.dataset.j==x[3])o.classList.add('ok')});if(!ok)b.classList.add('bad');beep(ok);if(ok){q.sc++;add(10)}
+$('#fb').innerHTML=`<div class="note">${ok?'Saktë! +10 XP.':'Jo saktë.'} ${x[4]}</div><button class="btn" id="nx">${q.i+1<q.L.length?'Pyetja tjetër':'Shih rezultatin'}</button>`;$('#nx').onclick=()=>{q.i++;V.quiz()}})};
+let tf;
+V.tf=()=>{if(!tf||tf.i>=TF.length)tf={L:shuffle(TF),i:0,sc:0};
+if(tf.i>=tf.L.length)return;const x=tf.L[tf.i];
+app.innerHTML=`<h2>E vërtetë apo e gabuar?</h2><p class="mut">${tf.i+1}/${tf.L.length} · Pikë: ${tf.sc}</p><h3>${x[0]}</h3><button class="opt" data-v="1">E vërtetë</button><button class="opt" data-v="0">E gabuar</button><div id="fb"></div>`;
+document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const ok=+b.dataset.v==x[1];document.querySelectorAll('.opt').forEach(o=>{o.disabled=1;if(+o.dataset.v==x[1])o.classList.add('ok')});if(!ok)b.classList.add('bad');beep(ok);if(ok){tf.sc++;add(5)}
+const last=tf.i+1>=tf.L.length;$('#fb').innerHTML=`<div class="note">${ok?'Saktë! +5 XP. ':'Gabim. '}${x[2]}</div><button class="btn" id="nx">${last?'Mbaro ('+tf.sc+'/'+tf.L.length+')':'Tjetra'}</button>`;$('#nx').onclick=()=>{if(last){tf=null;go('home')}else{tf.i++;V.tf()}}})};
+V.time=()=>{
+app.innerHTML=`<h2>Vija kohore</h2><div class="tl">${EV.map((e,i)=>`<button data-i="${i}"><b>${yr(e[0])}</b> — ${e[1]}</button>`).join('')}</div><div class="note" id="dt">Kliko një ngjarje për ta lexuar.</div>
+<h2>Vendose ngjarjen në kohë</h2><p class="mut">Kliko ngjarjet sipas rendit kronologjik, nga më e hershmja.</p><div id="g"></div>`;
+document.querySelectorAll('.tl button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tl button').forEach(x=>x.classList.remove('on'));b.classList.add('on');const e=EV[+b.dataset.i],t=T.find(t=>t.d.some(d=>d[1].toLowerCase().slice(0,12)==e[1].toLowerCase().slice(0,12)));$('#dt').innerHTML=`<b>${yr(e[0])}: ${e[1]}</b>${t?`<br><a href="#" onclick="go('topics','${t.id}');return false" style="color:var(--gold)">Lexo temën ${t.id}</a>`:''}${e[0]<0?'<br><small>Para erës sonë: numrat zvogëlohen drejt vitit 1.</small>':''}`});
+game()};
+function game(){const set=shuffle(EV).slice(0,5),order=[...set].sort((a,b)=>a[0]-b[0]);let k=0,err=0;
+const draw=()=>{$('#g').innerHTML=set.map((e,i)=>`<button class="opt" ${e.d?'disabled':''} data-i="${i}">${e.d?'✓ '+yr(e[0])+' — ':''}${e[1]}</button>`).join('')};
+draw();$('#g').onclick=ev=>{const b=ev.target.closest('.opt');if(!b)return;const e=set[+b.dataset.i];if(e==order[k]){e.d=1;k++;beep(1);draw()
+if(k==5){const pf=!err;if(pf)S.tlPerfect++;add(pf?50:10);toast(pf?'+50 XP, rend i përsosur!':'+10 XP');$('#g').innerHTML+=`<button class="btn" onclick="go('time')">Luaj përsëri</button>`}}else{err++;beep(0);toast('Jo ende. Kërko ngjarjen më të hershme.')}}}
+let kc={i:0,f:0};
+V.cards=()=>{const all=T.flatMap(t=>t.w.map(w=>[w[0],w[1]]).concat(t.d.map(d=>[d[1],d[0]])));
+kc.L=kc.L||shuffle(all);const x=kc.L[kc.i%kc.L.length];
+app.innerHTML=`<h2>Kartela digjitale</h2><p class="mut">Terma dhe data për përsëritje. ${kc.i%kc.L.length+1}/${kc.L.length}</p><button class="card" id="k" style="min-height:130px;width:100%;font-size:1.2rem;text-align:center">${kc.f?x[1]:x[0]}</button><p><button class="btn alt" onclick="kc.i=(kc.i+kc.L.length-1)%kc.L.length;kc.f=0;V.cards()">←</button><button class="btn" onclick="kc.i++;kc.f=0;V.cards()">Tjetra →</button></p><p class="mut">Kliko kartën për ta kthyer.</p>`;
+$('#k').onclick=()=>{kc.f=!kc.f;V.cards()}};
+V.me=()=>{app.innerHTML=`<h2>Arritjet e mia</h2>${panel()}<h3>Medaljet</h3><div class="grid">${MEDALS.map(m=>`<div class="card" style="opacity:${S.badges[m[0]]?1:.4}"><h3>${m[1]} ${m[0]}</h3><small>${S.badges[m[0]]?'Fituar':'E pafituar'}</small></div>`).join('')}</div><p><button class="btn alt" onclick="if(confirm('Të fshij gjithë progresin?')){localStorage.removeItem('chronos');location.reload()}">Fshi progresin</button></p>`};
+/* ---------- KONTROLLET ---------- */
+function applyT(){document.documentElement.dataset.theme=S.theme;$('#sn').textContent=S.sound?'🔊':'🔇'}
+$('#th').onclick=()=>{S.theme=S.theme=='dark'?'light':'dark';applyT();save()};
+$('#sn').onclick=()=>{S.sound=!S.sound;applyT();save()};
+$('#fc').onclick=()=>{document.body.classList.toggle('focus');if(document.body.classList.contains('focus'))toast('Shtyp Esc për të dalë nga leximi pa shpërqendrime')};
+document.addEventListener('keydown',e=>{if(e.key=='Escape')document.body.classList.remove('focus')});
+applyT();go('home');
+</script>
+</body>
+</html>
